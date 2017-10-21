@@ -23,22 +23,22 @@ void loop() {
   // put your main code here, to run repeatedly:
   reading1 = analogRead(coil1);
   dtostrf(reading1, 10, 4, outstr);
-  strcat(outstr, reading1);
+  strcat(outstr, coil1_tag);
   Serial.println(&outstr);
 
   reading2 = analogRead(coil2);
   dtostrf(reading2, 10, 4, outstr);
-  strcat(outstr, reading2);
+  strcat(outstr, coil2_tag);
   Serial.println(&outstr);
   
   reading3 = analogRead(coil3);
   dtostrf(reading3, 10, 4, outstr);
-  strcat(outstr, reading3);
+  strcat(outstr, coil3_tag);
   Serial.println(&outstr);
   
   reading4 = analogRead(coil4);
   dtostrf(reading4, 10, 4, outstr);
-  strcat(outstr, reading4);
+  strcat(outstr, coil4_tag);
   Serial.println(&outstr);
   
   //delay(10);
