@@ -1,8 +1,8 @@
 import os
 import time
 import sys
+import random
 import numpy as np
-import matplotlib.pyplot as plt
 from sklearn import svm
 import serial
 import serial.tools.list_ports
@@ -10,6 +10,15 @@ from PyQt5.QtGui import *
 import PyQt5.QtWidgets
 from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtWidgets import *
+
+import matplotlib
+matplotlib.use('Qt5Agg')
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 ard = serial.Serial()
 ard.baudrate = 115200
@@ -109,7 +118,8 @@ def trainClassifier():
 def collectData():
     #ser = Serial.serial
     for i in range(4):
-        coil = np.random.uniform(low=0.5, high=5.0, size=(100,))
+        coil1 = np.random.uniform(low=0.5, high=5.0, size=(100,))
+        coil
         
     pass
 
@@ -182,10 +192,8 @@ class TrackingGui(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.initUI()
 
-    def initUI(self):
-
+        #Coordinate box setup
         xlabel = QLabel('X:', self) 
         xlabel.setMaximumWidth(40)
         ylabel = QLabel('Y:', self) 
@@ -200,6 +208,17 @@ class TrackingGui(QWidget):
         self.zline = QLineEdit('')
         self.zline.setReadOnly(True)
         
+        #Plot setup
+         # a figure instance to plot on
+        self.figure = Figure()
+
+        # this is the Canvas Widget that displays the `figure`
+        # it takes the `figure` instance as a parameter to __init__
+        self.canvas = FigureCanvas(self.figure)
+        #self.fig = plt.figure()
+        self.ax = self.figure.add_subplot(111, projection='3d')
+        
+        #Placing objects onto the GUI
         grid = QGridLayout()
         grid.setSpacing(10)
 
@@ -211,10 +230,11 @@ class TrackingGui(QWidget):
         
         grid.addWidget(zlabel, 2, 0)
         grid.addWidget(self.zline, 2, 1)
-
+        
         grid.columnStretch(0)
 
         vbox = QVBoxLayout()
+        vbox.addWidget(self.canvas)
         vbox.addStretch(1)
 
         hbox = QHBoxLayout()
@@ -226,20 +246,39 @@ class TrackingGui(QWidget):
         self.setWindowTitle('3D Tracking GUI')
         self.center()
         self.show()
-        
-        self.updateX()
 
-        self.infiniteLoop()
+        timer = QTimer(self)
+        timer.timeout.connect(self.updatePlot)
+        timer.start(20)
         
-    def infiniteLoop(self):
+    def updatePlot(self):
         try:
-            pass
-        except:
-            print('exception')
+            ''' plot some random stuff '''
+            #x, y, z = classifyData()
+            x = random.uniform(0.0,30.0)
+            y = random.uniform(0.0,20.0)
+            z = random.uniform(0.0,10.0)
             
-    def updateX(self):
-        
-        self.xline.setText('20')
+            self.xline.setText(str(round(x,2))+' mm')
+            self.yline.setText(str(round(y,2))+' mm')
+            self.zline.setText(str(round(z,2))+' mm')
+            
+            # create an axis
+            #ax = self.figure.add_subplot(111, projection='3d')
+
+            # discards the old graph
+            self.ax.clear()
+
+            # plot data
+            self.ax.set_xlim(0, 30, 5)
+            self.ax.set_ylim(0, 20, 5)
+            self.ax.set_zlim(0, 10, 2)
+            self.ax.scatter(x, y, z, 'gray')
+
+            # refresh canvas
+            self.canvas.draw()
+        except Exception as exc:
+            print('Exception: "%s"' % exc)
         
     def center(self):
         qr = self.frameGeometry()
@@ -248,7 +287,12 @@ class TrackingGui(QWidget):
         self.move(qr.topLeft())
             
 if __name__ == '__main__':
+    
     try:
+        try:
+            connectArduino()
+        except:
+            print('No Arduino')
         app = QApplication(sys.argv)
         ex = TrackingGui()
         sys.exit(app.exec_())
