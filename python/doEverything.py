@@ -2,6 +2,7 @@ import os
 import time
 import sys
 import random
+import pprint
 import numpy as np
 from sklearn import svm
 import serial
@@ -116,31 +117,45 @@ def trainClassifier():
 
 
 def collectData():
+    path = 'C:\\Users\\Gersemi\\Desktop\\Github\\3Dtracking\\python'
     #ser = Serial.serial
     """for i in range(4):
         coil1 = np.random.uniform(low=0.5, high=5.0, size=(100,))
         coil
 
     """
-    cord = np.random.uniform(low=0.1, high=1.0, size=(100,))
-    x = '1'
-    y = '1'
-    z = '0'
-    dataFile = "cord-%s-%s-%s.txt" %  (x, y, z)
-    print(dataFile)
-    f = open(dataFile, 'w')
-    #f.write(cord)
-    f.close()
-    
-    """cord-1-2-0 = np.random.uniform(low=1.1, high=2.0, size=(100,))
-    dataFile-1-2-0 = '..\readings\cord-1-2-0.txt'
-    
-    cord-2-1-0 = np.random.uniform(low=3.1, high=4.0, size=(100,))
-    dataFile-2-1-0 = '..\readings\cord-2-1-0.txt'
-    
-    cord-2-2-0 = np.random.uniform(low=2.1, high=3.0, size=(100,))
-    dataFile-2-2-0 = '..\readings\cord-2-2-0.txt'"""
-    
+    for i in range(5):
+        coil1 = np.random.uniform(low=4, high=5, size=(100,))
+        coil2 = np.random.uniform(low=2, high=4, size=(100,))
+        
+    ##    cordCopy = cord.copy()
+        x = '1'
+        y = '1'
+        z = '0'
+        dataFile = "cord_%s_%s_%s.py" %  (x, y, z)
+        featuresC1 = get_indicators(coil1)
+        featuresC2 = get_indicators(coil2)
+        features = []
+        features.extend(featuresC1)
+        features.extend(featuresC2)
+        print(features)
+    ##    cordCopy = cordCopy.tolist()
+    ##    cordCopy.append(features)
+    ##    print(dataFile)
+        #if os.
+        f = open(dataFile, 'w')
+        f.write('X = ' + pprint.pformat(features) + '\n')
+        f.close()
+        
+        """cord-1-2-0 = np.random.uniform(low=1.1, high=2.0, size=(100,))
+        dataFile-1-2-0 = '..\readings\cord-1-2-0.txt'
+        
+        cord-2-1-0 = np.random.uniform(low=3.1, high=4.0, size=(100,))
+        dataFile-2-1-0 = '..\readings\cord-2-1-0.txt'
+        
+        cord-2-2-0 = np.random.uniform(low=2.1, high=3.0, size=(100,))
+        dataFile-2-2-0 = '..\readings\cord-2-2-0.txt'"""
+        
 
 def get_indicators(vec):
     '''
@@ -148,11 +163,11 @@ def get_indicators(vec):
     '''
     mean = np.mean(vec)
     slope = calc_slope(np.arange(len(vec)),vec)
-    std = np.std(vec)
+    #std = np.std(vec)
     mx = np.max(vec)
     mi = np.min(vec)
     sdev = np.std(vec)
-    return mean, slope, std, mx, mi, sdev
+    return [mean, slope, mx, mi, sdev]
 
 def calc_slope(x,y):
     '''
