@@ -1,7 +1,9 @@
 import os
 import time
+from datetime import datetime
 import sys
 import random
+import uuid
 import pprint
 import numpy as np
 from sklearn import svm
@@ -24,6 +26,34 @@ from mpl_toolkits.mplot3d import Axes3D
 ard = serial.Serial()
 ard.baudrate = 115200
 
+def standarizeData():
+    X = []
+    y = []
+    try:
+        os.chdir(os.getcwd()+'\\data')
+        for path, subdir, files in os.walk('.'):
+            print(os.getcwd())
+            for directory in subdir:
+                loc = directory.split("_")
+                for file in os.listdir(os.getcwd() + '\\'+directory):
+                    os.chdir(os.getcwd()+ '\\'+directory)
+                    print(os.getcwd())
+                    #loc = [loc[1]+loc[2]+loc[3]]
+                    print(file[-2:])
+                    if file[-2:]=='py':
+                        print('renming: "%s"'%file)
+                        print(os.getcwd())
+                        os.rename(file,file[:-2]+'txt')
+                        #file[-2:]='txt'
+                    #import file
+                    print(file)
+                y.append(loc[1]+loc[2]+loc[3])
+                
+            #for
+    except Exception as exc:
+        print(exc)
+    print(y)
+
 def trainClassifier():
     from sklearn.tree import DecisionTreeClassifier
     from sklearn.neighbors import KNeighborsClassifier
@@ -34,7 +64,7 @@ def trainClassifier():
     from sklearn.ensemble import RandomForestClassifier
 
     #This is whatever you saved your X and y data into
-    import carAndJunkFeatures
+    
 
     X = np.array(carAndJunkFeatures.X)
     y = np.array(carAndJunkFeatures.y)
@@ -117,7 +147,7 @@ def trainClassifier():
 
 
 def collectData():
-    path = 'C:\\Users\\Gersemi\\Desktop\\Github\\3Dtracking\\python'
+    path = 'C:\\Users\\Sara Srivastav\\Documents\\senior design\\3Dtracking\\python\\data'
     #ser = Serial.serial
     """for i in range(4):
         coil1 = np.random.uniform(low=0.5, high=5.0, size=(100,))
@@ -125,25 +155,35 @@ def collectData():
 
     """
     for i in range(5):
-        coil1 = np.random.uniform(low=4, high=5, size=(100,))
-        coil2 = np.random.uniform(low=2, high=4, size=(100,))
+        coil1 = np.random.uniform(low=1, high=2, size=(100,))
+        coil2 = np.random.uniform(low=1, high=2, size=(100,))
+        coil3 = np.random.uniform(low=4, high=5, size=(100,))
+        coil4 = np.random.uniform(low=4, high=5, size=(100,))
         
     ##    cordCopy = cord.copy()
-        x = '1'
-        y = '1'
+        x = '2'
+        y = '2'
         z = '0'
-        dataFile = "cord_%s_%s_%s.py" %  (x, y, z)
+        
+        dataFolder = path + "\\cord_%s_%s_%s" %  (x, y, z)
+        if not os.path.exists(dataFolder):
+            os.makedirs(dataFolder)
+        dataFile = "%s.py" %  (datetime.utcnow().strftime('%Y%m%d_%H%M%S%f')[:-3])
         featuresC1 = get_indicators(coil1)
         featuresC2 = get_indicators(coil2)
+        featuresC3 = get_indicators(coil3)
+        featuresC4 = get_indicators(coil4)
         features = []
         features.extend(featuresC1)
         features.extend(featuresC2)
+        features.extend(featuresC3)
+        features.extend(featuresC4)
         print(features)
     ##    cordCopy = cordCopy.tolist()
     ##    cordCopy.append(features)
     ##    print(dataFile)
         #if os.
-        f = open(dataFile, 'w')
+        f = open(dataFolder + "\\"+ dataFile, 'w')
         f.write('X = ' + pprint.pformat(features) + '\n')
         f.close()
         
@@ -327,7 +367,8 @@ if __name__ == '__main__':
             connectArduino()
         except:
             print('No Arduino')
-        collectData()
+        #collectData()
+        standarizeData() 
         #app = QApplication(sys.argv)
         #ex = TrackingGui()
         #sys.exit(app.exec_())
