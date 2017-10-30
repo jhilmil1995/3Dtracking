@@ -117,11 +117,30 @@ def trainClassifier():
 
 def collectData():
     #ser = Serial.serial
-    for i in range(4):
+    """for i in range(4):
         coil1 = np.random.uniform(low=0.5, high=5.0, size=(100,))
         coil
-        
-    pass
+
+    """
+    cord = np.random.uniform(low=0.1, high=1.0, size=(100,))
+    x = '1'
+    y = '1'
+    z = '0'
+    dataFile = "cord-%s-%s-%s.txt" %  (x, y, z)
+    print(dataFile)
+    f = open(dataFile, 'w')
+    #f.write(cord)
+    f.close()
+    
+    """cord-1-2-0 = np.random.uniform(low=1.1, high=2.0, size=(100,))
+    dataFile-1-2-0 = '..\readings\cord-1-2-0.txt'
+    
+    cord-2-1-0 = np.random.uniform(low=3.1, high=4.0, size=(100,))
+    dataFile-2-1-0 = '..\readings\cord-2-1-0.txt'
+    
+    cord-2-2-0 = np.random.uniform(low=2.1, high=3.0, size=(100,))
+    dataFile-2-2-0 = '..\readings\cord-2-2-0.txt'"""
+    
 
 def get_indicators(vec):
     '''
@@ -293,8 +312,9 @@ if __name__ == '__main__':
             connectArduino()
         except:
             print('No Arduino')
-        app = QApplication(sys.argv)
-        ex = TrackingGui()
-        sys.exit(app.exec_())
+        collectData()
+        #app = QApplication(sys.argv)
+        #ex = TrackingGui()
+        #sys.exit(app.exec_())
     except KeyboardInterrupt:
         pass
