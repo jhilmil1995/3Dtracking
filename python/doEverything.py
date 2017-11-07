@@ -32,27 +32,21 @@ def standarizeData():
     try:
         os.chdir(os.getcwd()+'\\data')
         for path, subdir, files in os.walk('.'):
-            print(os.getcwd())
-            for directory in subdir:
-                loc = directory.split("_")
+            for directory in subdir:            
                 for file in os.listdir(os.getcwd() + '\\'+directory):
-                    os.chdir(os.getcwd()+ '\\'+directory)
-                    print(os.getcwd())
-                    #loc = [loc[1]+loc[2]+loc[3]]
-                    print(file[-2:])
-                    if file[-2:]=='py':
-                        print('renming: "%s"'%file)
-                        print(os.getcwd())
-                        os.rename(file,file[:-2]+'txt')
-                        #file[-2:]='txt'
-                    #import file
-                    print(file)
-                y.append(loc[1]+loc[2]+loc[3])
-                
-            #for
+                    X.append(directory)
+                    filename = os.getcwd()+ '\\'+directory + '\\' + file
+                    f = open(filename, 'r')
+                    data = f.read()#[1:-1]
+                    data = data[1:-1]
+                    data = [float(s) for s in data.split(',')]
+                    y.append(data)
+                    f.close()
     except Exception as exc:
         print(exc)
     print(y)
+    print(X)
+    print(len(X), len(y))
 
 def trainClassifier():
     from sklearn.tree import DecisionTreeClassifier
@@ -155,10 +149,10 @@ def collectData():
 
     """
     for i in range(5):
-        coil1 = np.random.uniform(low=1, high=2, size=(100,))
-        coil2 = np.random.uniform(low=1, high=2, size=(100,))
-        coil3 = np.random.uniform(low=4, high=5, size=(100,))
-        coil4 = np.random.uniform(low=4, high=5, size=(100,))
+        coil1 = np.random.uniform(low=0, high=3, size=(100,))
+        coil2 = np.random.uniform(low=0, high=3, size=(100,))
+        coil3 = np.random.uniform(low=3, high=5, size=(100,))
+        coil4 = np.random.uniform(low=3, high=5, size=(100,))
         
     ##    cordCopy = cord.copy()
         x = '2'
@@ -168,7 +162,7 @@ def collectData():
         dataFolder = path + "\\cord_%s_%s_%s" %  (x, y, z)
         if not os.path.exists(dataFolder):
             os.makedirs(dataFolder)
-        dataFile = "%s.py" %  (datetime.utcnow().strftime('%Y%m%d_%H%M%S%f')[:-3])
+        dataFile = "%s.txt" %  (datetime.utcnow().strftime('%Y%m%d_%H%M%S%f')[:-3])
         featuresC1 = get_indicators(coil1)
         featuresC2 = get_indicators(coil2)
         featuresC3 = get_indicators(coil3)
@@ -184,7 +178,8 @@ def collectData():
     ##    print(dataFile)
         #if os.
         f = open(dataFolder + "\\"+ dataFile, 'w')
-        f.write('X = ' + pprint.pformat(features) + '\n')
+        #print(pprint.pformat(features)) 
+        f.write(str(features))#+ '\n')
         f.close()
         
         """cord-1-2-0 = np.random.uniform(low=1.1, high=2.0, size=(100,))
