@@ -34,19 +34,26 @@ def standarizeData():
         for path, subdir, files in os.walk('.'):
             for directory in subdir:            
                 for file in os.listdir(os.getcwd() + '\\'+directory):
-                    X.append(directory)
+                    y.append(directory)
                     filename = os.getcwd()+ '\\'+directory + '\\' + file
                     f = open(filename, 'r')
                     data = f.read()#[1:-1]
                     data = data[1:-1]
                     data = [float(s) for s in data.split(',')]
-                    y.append(data)
+                    X.append(data)
                     f.close()
     except Exception as exc:
         print(exc)
-    print(y)
-    print(X)
-    print(len(X), len(y))
+    #print(y)
+    #print(X)
+    os.chdir(os.getcwd()+'\\..')
+    print(os.getcwd())
+    dataFile = 'features.py'
+    fileObj = open(dataFile, 'w')
+    fileObj.write('X = ' + pprint.pformat(X)+ '\n')
+    fileObj.write('y = ' + pprint.pformat(y)+ '\n')
+    fileObj.close()
+    #print(len(X), len(y))
 
 def trainClassifier():
     from sklearn.tree import DecisionTreeClassifier
@@ -58,10 +65,10 @@ def trainClassifier():
     from sklearn.ensemble import RandomForestClassifier
 
     #This is whatever you saved your X and y data into
-    
+    import features
 
-    X = np.array(carAndJunkFeatures.X)
-    y = np.array(carAndJunkFeatures.y)
+    X = np.array(features.X)
+    y = np.array(features.y)
 
     testSize = .3
     randomState=1
@@ -143,18 +150,131 @@ def trainClassifier():
 def collectData():
     path = 'C:\\Users\\Sara Srivastav\\Documents\\senior design\\3Dtracking\\python\\data'
     #ser = Serial.serial
-    """for i in range(4):
-        coil1 = np.random.uniform(low=0.5, high=5.0, size=(100,))
-        coil
-
     """
-    for i in range(5):
+        #Coil1
+        coil1 = np.random.uniform(low=3, high=5, size=(100,))
+        coil2 = np.random.uniform(low=3, high=5, size=(100,))
+        coil3 = np.random.uniform(low=0, high=3, size=(100,))
+        coil4 = np.random.uniform(low=0, high=3, size=(100,))
+        x = '1'
+        y = '1'
+        z = '0'
+        #Coil2
+        coil1 = np.random.uniform(low=3, high=5, size=(100,))
+        coil2 = np.random.uniform(low=0, high=3, size=(100,))
+        coil3 = np.random.uniform(low=3, high=5, size=(100,))
+        coil4 = np.random.uniform(low=0, high=3, size=(100,))
+        x = '1'
+        y = '2'
+        z = '0'
+        #Coil3
+        coil1 = np.random.uniform(low=0, high=3, size=(100,))
+        coil2 = np.random.uniform(low=3, high=5, size=(100,))
+        coil3 = np.random.uniform(low=0, high=3, size=(100,))
+        coil4 = np.random.uniform(low=3, high=5, size=(100,))
+        x = '2'
+        y = '1'
+        z = '0'
+        #Coil4
         coil1 = np.random.uniform(low=0, high=3, size=(100,))
         coil2 = np.random.uniform(low=0, high=3, size=(100,))
         coil3 = np.random.uniform(low=3, high=5, size=(100,))
         coil4 = np.random.uniform(low=3, high=5, size=(100,))
+        x = '2'
+        y = '2'
+        z = '0'
+    """
+    numsamples = 30
+    for i in range(numsamples):
+        #Coil1
+        coil1 = np.random.uniform(low=3, high=5, size=(100,))
+        coil2 = np.random.uniform(low=3, high=5, size=(100,))
+        coil3 = np.random.uniform(low=0, high=3, size=(100,))
+        coil4 = np.random.uniform(low=0, high=3, size=(100,))
+        x = '1'
+        y = '1'
+        z = '0'
         
-    ##    cordCopy = cord.copy()
+        dataFolder = path + "\\cord_%s_%s_%s" %  (x, y, z)
+        if not os.path.exists(dataFolder):
+            os.makedirs(dataFolder)
+        dataFile = "%s.txt" %  (datetime.utcnow().strftime('%Y%m%d_%H%M%S%f')[:-3])
+        featuresC1 = get_indicators(coil1)
+        featuresC2 = get_indicators(coil2)
+        featuresC3 = get_indicators(coil3)
+        featuresC4 = get_indicators(coil4)
+        features = []
+        features.extend(featuresC1)
+        features.extend(featuresC2)
+        features.extend(featuresC3)
+        features.extend(featuresC4)
+        print(features)
+        f = open(dataFolder + "\\"+ dataFile, 'w')
+        f.write(str(features))
+        f.close()
+    
+    for i in range(numsamples):
+        #Coil2
+        coil1 = np.random.uniform(low=3, high=5, size=(100,))
+        coil2 = np.random.uniform(low=0, high=3, size=(100,))
+        coil3 = np.random.uniform(low=3, high=5, size=(100,))
+        coil4 = np.random.uniform(low=0, high=3, size=(100,))
+        x = '1'
+        y = '2'
+        z = '0'
+        
+        dataFolder = path + "\\cord_%s_%s_%s" %  (x, y, z)
+        if not os.path.exists(dataFolder):
+            os.makedirs(dataFolder)
+        dataFile = "%s.txt" %  (datetime.utcnow().strftime('%Y%m%d_%H%M%S%f')[:-3])
+        featuresC1 = get_indicators(coil1)
+        featuresC2 = get_indicators(coil2)
+        featuresC3 = get_indicators(coil3)
+        featuresC4 = get_indicators(coil4)
+        features = []
+        features.extend(featuresC1)
+        features.extend(featuresC2)
+        features.extend(featuresC3)
+        features.extend(featuresC4)
+        print(features)
+        f = open(dataFolder + "\\"+ dataFile, 'w')
+        f.write(str(features))
+        f.close()
+
+    for i in range(numsamples):
+        #Coil3
+        coil1 = np.random.uniform(low=0, high=3, size=(100,))
+        coil2 = np.random.uniform(low=3, high=5, size=(100,))
+        coil3 = np.random.uniform(low=0, high=3, size=(100,))
+        coil4 = np.random.uniform(low=3, high=5, size=(100,))
+        x = '2'
+        y = '1'
+        z = '0'
+        
+        dataFolder = path + "\\cord_%s_%s_%s" %  (x, y, z)
+        if not os.path.exists(dataFolder):
+            os.makedirs(dataFolder)
+        dataFile = "%s.txt" %  (datetime.utcnow().strftime('%Y%m%d_%H%M%S%f')[:-3])
+        featuresC1 = get_indicators(coil1)
+        featuresC2 = get_indicators(coil2)
+        featuresC3 = get_indicators(coil3)
+        featuresC4 = get_indicators(coil4)
+        features = []
+        features.extend(featuresC1)
+        features.extend(featuresC2)
+        features.extend(featuresC3)
+        features.extend(featuresC4)
+        print(features)
+        f = open(dataFolder + "\\"+ dataFile, 'w')
+        f.write(str(features))
+        f.close()
+
+    for i in range(numsamples):
+        #Coil4
+        coil1 = np.random.uniform(low=0, high=3, size=(100,))
+        coil2 = np.random.uniform(low=0, high=3, size=(100,))
+        coil3 = np.random.uniform(low=3, high=5, size=(100,))
+        coil4 = np.random.uniform(low=3, high=5, size=(100,))
         x = '2'
         y = '2'
         z = '0'
@@ -173,23 +293,9 @@ def collectData():
         features.extend(featuresC3)
         features.extend(featuresC4)
         print(features)
-    ##    cordCopy = cordCopy.tolist()
-    ##    cordCopy.append(features)
-    ##    print(dataFile)
-        #if os.
         f = open(dataFolder + "\\"+ dataFile, 'w')
-        #print(pprint.pformat(features)) 
-        f.write(str(features))#+ '\n')
+        f.write(str(features))
         f.close()
-        
-        """cord-1-2-0 = np.random.uniform(low=1.1, high=2.0, size=(100,))
-        dataFile-1-2-0 = '..\readings\cord-1-2-0.txt'
-        
-        cord-2-1-0 = np.random.uniform(low=3.1, high=4.0, size=(100,))
-        dataFile-2-1-0 = '..\readings\cord-2-1-0.txt'
-        
-        cord-2-2-0 = np.random.uniform(low=2.1, high=3.0, size=(100,))
-        dataFile-2-2-0 = '..\readings\cord-2-2-0.txt'"""
         
 
 def get_indicators(vec):
@@ -363,7 +469,8 @@ if __name__ == '__main__':
         except:
             print('No Arduino')
         #collectData()
-        standarizeData() 
+        standarizeData()
+        trainClassifier()
         #app = QApplication(sys.argv)
         #ex = TrackingGui()
         #sys.exit(app.exec_())
