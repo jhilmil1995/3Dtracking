@@ -106,7 +106,7 @@ def testRegression():
 def trainClassifier():
     from sklearn.tree import DecisionTreeClassifier
     from sklearn.neighbors import KNeighborsClassifier
-    from sklearn.svm import SVC
+    from sklearn.svm import SVC, SVR
     from sklearn.ensemble import VotingClassifier
     from itertools import product
     from sklearn.cross_validation import train_test_split
@@ -123,6 +123,7 @@ def trainClassifier():
     
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=testSize, random_state=randomState)
 
+    #Classification
     clf0 = svm.SVC(kernel='linear')
     clf1 = DecisionTreeClassifier(max_depth=4)
     clf2 = KNeighborsClassifier(n_neighbors=7)
@@ -130,14 +131,26 @@ def trainClassifier():
     eclf = VotingClassifier(estimators=[('dt', clf1), ('knn', clf2),
                                     ('svc', clf3)],
                         voting='soft', weights=[2, 1, 2])
+
+    #Regression
+    svrRbf = SVR(kernel='rbf', C=1e3, gamma=0.1)
+    scrLin = SVR(kernel='linear', C=1e3)
+    svrPoly = SVR(kernel='poly', C=1e3, degree=2)
+    
     
     clf0.fit(X_train,y_train)
     clf1.fit(X_train,y_train)
     clf2.fit(X_train,y_train)
     clf3.fit(X_train,y_train)
     eclf.fit(X_train,y_train)
+
+    svrRbf.fit(X_train,y_train)
+    svrLin.fit(X_train,y_train)
+    svrPoly.fit(X_train,y_train)
     
-    estimatorName=['linear SVC', 'Decision Tree', 'K Neighbors', 'rbf Kernel SVC', 'Voting Classifier']
+    estimatorName=['linear SVC', 'Decision Tree', 'K Neighbors',
+                   'rbf Kernel SVC', 'Voting Classifier', 'SVR-RBF',
+                   'SVR-Lin', 'SVR-Poly']
     predictions=[]
     predictions.append(clf0.predict(X_test))
     predictions.append(clf1.predict(X_test))
@@ -145,7 +158,11 @@ def trainClassifier():
     predictions.append(clf3.predict(X_test))
     predictions.append(eclf.predict(X_test))
     
-    for i in range(5):
+    predictions.append(svrRbf.predict(X_test))
+    predictions.append(svrLin.predict(X_test))
+    predictions.append(svrPoly.predict(X_test))
+    
+    for i in range(len(predictions)):
 
         pprint.pprint(estimatorName[i])
         pprint.pprint('Predictions:'), pprint.pprint(np.array(predictions[i]))
@@ -524,7 +541,10 @@ if __name__ == '__main__':
             print('No Arduino')
         #collectData()
         #standarizeData()
+<<<<<<< HEAD
         #testRegression()
+=======
+>>>>>>> 406bfa1a2d4e0dde71d78b8c6e20399abeb9103d
         trainClassifier()
         #app = QApplication(sys.argv)
         #ex = TrackingGui()
