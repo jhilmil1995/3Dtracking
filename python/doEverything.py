@@ -541,10 +541,8 @@ if __name__ == '__main__':
             print('No Arduino')
         #collectData()
         #standarizeData()
-<<<<<<< HEAD
         #testRegression()
-=======
->>>>>>> 406bfa1a2d4e0dde71d78b8c6e20399abeb9103d
+
         trainClassifier()
         #app = QApplication(sys.argv)
         #ex = TrackingGui()
