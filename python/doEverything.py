@@ -34,7 +34,10 @@ def standarizeData():
         for path, subdir, files in os.walk('.'):
             for directory in subdir:            
                 for file in os.listdir(os.getcwd() + '\\'+directory):
+                    #directory = list(map(int,directory.split('_')[1:]))
                     y.append(directory)
+                    #y.append(list(map(int,directory.split('_')[1:])))
+                    #print(list(map(int,directory.split('_')[1:])))
                     filename = os.getcwd()+ '\\'+directory + '\\' + file
                     f = open(filename, 'r')
                     data = f.read()#[1:-1]
@@ -47,13 +50,58 @@ def standarizeData():
     #print(y)
     #print(X)
     os.chdir(os.getcwd()+'\\..')
-    print(os.getcwd())
     dataFile = 'features.py'
     fileObj = open(dataFile, 'w')
     fileObj.write('X = ' + pprint.pformat(X)+ '\n')
     fileObj.write('y = ' + pprint.pformat(y)+ '\n')
     fileObj.close()
     #print(len(X), len(y))
+
+    
+def testRegression():
+    from sklearn.cross_validation import train_test_split
+    from sklearn import linear_model
+    
+    import features
+    X = np.array(features.X)
+    y = np.array(features.y)
+
+    testSize = .2
+    randomState=1
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=testSize, random_state=randomState) 
+    
+    ols = linear_model.LinearRegression(copy_X=True)
+    ols.fit(X_train, y_train)
+
+    results = ols.predict(X_test)
+    #print(type(results))
+    print([round(elem) for elem in results])
+    
+    """estimatorName=['Linear Regression']
+    predictions=[]
+    
+    predictions.append(ols.predict(X_test))
+    predictions.append(clf1.predict(X_test))
+    predictions.append(clf2.predict(X_test))
+    predictions.append(clf3.predict(X_test))
+    predictions.append(eclf.predict(X_test))"""
+    """
+    for i in range(1):
+
+        pprint.pprint(estimatorName[i])
+        pprint.pprint('Predictions:'), pprint.pprint(np.array(predictions[i]))
+        pprint.pprint('Ground Truth:'), pprint.pprint(np.array(y_test))
+        
+        predVsTruth=predictions[i]==y_test        
+        pprint.pprint(predVsTruth)
+        numCases =(len(predictions[i]))
+        numTrue = np.sum(predVsTruth)
+        numFalse = numCases - numTrue
+        print('Accuracy is: "%s"' % (numTrue/numCases*100))
+        print('Number True: "%s", Number False: "%s"\n\n' % (numTrue,numFalse))
+    
+    """
 
 def trainClassifier():
     from sklearn.tree import DecisionTreeClassifier
@@ -62,7 +110,7 @@ def trainClassifier():
     from sklearn.ensemble import VotingClassifier
     from itertools import product
     from sklearn.cross_validation import train_test_split
-    from sklearn.ensemble import RandomForestClassifier
+    #from sklearn.ensemble import RandomForestClassifier
 
     #This is whatever you saved your X and y data into
     import features
@@ -121,7 +169,7 @@ def trainClassifier():
     #The graphing portion of this is not working 100% currently
     feat_labels = ['m','sf','mx','mi','sdev','amin','smin','stmin','apeak','speak','stpeak','acep','scep','stcep','aacep','sscep','stsscep','zcc','zccn','spread','skewness','savss','mavss']
 
-    forest = RandomForestClassifier(n_estimators=10000,random_state=0,n_jobs=1)
+    """forest = RandomForestClassifier(n_estimators=10000,random_state=0,n_jobs=1)
     forest.fit(X_train,y_train)
     importances = forest.feature_importances_
 
@@ -144,7 +192,7 @@ def trainClassifier():
     plt.tight_layout()
     #plt.savefig('./random_forest.png', dpi=300)
     plt.show()
-    
+    """
 
 
 def collectData():
@@ -208,7 +256,7 @@ def collectData():
         features.extend(featuresC2)
         features.extend(featuresC3)
         features.extend(featuresC4)
-        print(features)
+        #print(features)
         f = open(dataFolder + "\\"+ dataFile, 'w')
         f.write(str(features))
         f.close()
@@ -236,7 +284,7 @@ def collectData():
         features.extend(featuresC2)
         features.extend(featuresC3)
         features.extend(featuresC4)
-        print(features)
+        #print(features)
         f = open(dataFolder + "\\"+ dataFile, 'w')
         f.write(str(features))
         f.close()
@@ -264,7 +312,7 @@ def collectData():
         features.extend(featuresC2)
         features.extend(featuresC3)
         features.extend(featuresC4)
-        print(features)
+        #print(features)
         f = open(dataFolder + "\\"+ dataFile, 'w')
         f.write(str(features))
         f.close()
@@ -292,7 +340,7 @@ def collectData():
         features.extend(featuresC2)
         features.extend(featuresC3)
         features.extend(featuresC4)
-        print(features)
+        #print(features)
         f = open(dataFolder + "\\"+ dataFile, 'w')
         f.write(str(features))
         f.close()
@@ -430,6 +478,12 @@ class TrackingGui(QWidget):
         try:
             ''' plot some random stuff '''
             #x, y, z = classifyData()
+            #stirng parser for foldername
+            #output = list(map(int,directory.split('_')[1:]))
+            #x = output[0]
+            #y = output[1]
+            #z = output[2]
+            
             x = random.uniform(0.0,30.0)
             y = random.uniform(0.0,20.0)
             z = random.uniform(0.0,10.0)
@@ -469,7 +523,8 @@ if __name__ == '__main__':
         except:
             print('No Arduino')
         #collectData()
-        standarizeData()
+        #standarizeData()
+        #testRegression()
         trainClassifier()
         #app = QApplication(sys.argv)
         #ex = TrackingGui()
