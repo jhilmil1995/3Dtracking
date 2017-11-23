@@ -166,59 +166,27 @@ def trainClassifier():
 
 def collectData():
     try:
-        #path = 'C:\\Users\\Sara Srivastav\\Documents\\senior design\\3Dtracking\\python\\data'\
-        path = 'C:\\Users\\Gersemi\\Desktop\\Github\\3Dtracking\\data\\'
+        path = 'C:\\Users\\Sara Srivastav\\Documents\\senior design\\3Dtracking\\python\\data'\
+        #path = 'C:\\Users\\Gersemi\\Desktop\\Github\\3Dtracking\\data\\'
         #ser = Serial.serial
-        """
-            #Coil1
-            coil1 = np.random.uniform(low=3, high=5, size=(100,))
-            coil2 = np.random.uniform(low=3, high=5, size=(100,))
-            coil3 = np.random.uniform(low=0, high=3, size=(100,))
-            coil4 = np.random.uniform(low=0, high=3, size=(100,))
-            x = '1'
-            y = '1'
-            z = '0'
-            #Coil2
-            coil1 = np.random.uniform(low=3, high=5, size=(100,))
-            coil2 = np.random.uniform(low=0, high=3, size=(100,))
-            coil3 = np.random.uniform(low=3, high=5, size=(100,))
-            coil4 = np.random.uniform(low=0, high=3, size=(100,))
-            x = '1'
-            y = '2'
-            z = '0'
-            #Coil3
-            coil1 = np.random.uniform(low=0, high=3, size=(100,))
-            coil2 = np.random.uniform(low=3, high=5, size=(100,))
-            coil3 = np.random.uniform(low=0, high=3, size=(100,))
-            coil4 = np.random.uniform(low=3, high=5, size=(100,))
-            x = '2'
-            y = '1'
-            z = '0'
-            #Coil4
-            coil1 = np.random.uniform(low=0, high=3, size=(100,))
-            coil2 = np.random.uniform(low=0, high=3, size=(100,))
-            coil3 = np.random.uniform(low=3, high=5, size=(100,))
-            coil4 = np.random.uniform(low=3, high=5, size=(100,))
-            x = '2'
-            y = '2'
-            z = '0'
-        """
+        
         numsamples = 100
         coil1arr=[]
         coil2arr=[]
         coil3arr=[]
         coil4arr=[]
-        x = '3'
-        y = '5'
+        o = '270'
+        x = '6'
+        y = '6'
         z = '5'
         
-        dataFolder = path + "\\cord_%s_%s_%s" %  (x, y, z)
+        dataFolder = path + "\\cord_%s_%s_%s_%s" %  (o, x, y, z)
         if not os.path.exists(dataFolder):
             os.makedirs(dataFolder)
-        dataFile = "%s.txt" %  (datetime.utcnow().strftime('%Y%m%d_%H%M%S%f')[:-3])
+        
         for i in range(numsamples):
-            for i in range(400):
-                
+            dataFile = "%s.txt" %  (datetime.utcnow().strftime('%Y%m%d_%H%M%S%f')[:-3])
+            for i in range(10):
                 reading = ard.readline().decode("utf-8")
                 if 'coil1' in reading:
                     coil1 = reading
@@ -252,98 +220,16 @@ def collectData():
             f = open(dataFolder + "\\"+ dataFile, 'w')
             f.write(str(features))
             f.close()
-            f = open(path + "\\signal_cord_%s_%s_%s" %  (x, y, z) + dataFile+'.txt', 'w')
-            f.write(str(coil1arr))
-            f.write(str(coil2arr))
-            f.write(str(coil3arr))
-            f.write(str(coil4arr))
-        except Exception as exc:
+        f = open(path + "\\signal_cord_%s_%s_%s_%s_" %  (o,x, y, z) + dataFile, 'w')
+        f.write(str(coil1arr))
+        f.write(str(coil2arr))
+        f.write(str(coil3arr))
+        f.write(str(coil4arr))
+        f.close()
+    except Exception as exc:
             print(exc)
             ard.close()
-##    
-##    for i in range(numsamples):
-##        #Coil2
-##        #coil1 = np.random.uniform(low=3, high=5, size=(100,))
-##        #coil2 = np.random.uniform(low=0, high=3, size=(100,))
-##        #coil3 = np.random.uniform(low=3, high=5, size=(100,))
-##        coil4 = np.random.uniform(low=0, high=3, size=(100,))
-##        x = '1'
-##        y = '1'
-##        z = '0'
-##        
-##        dataFolder = path + "\\cord_%s_%s_%s" %  (x, y, z)
-##        if not os.path.exists(dataFolder):
-##            os.makedirs(dataFolder)
-##        dataFile = "%s.txt" %  (datetime.utcnow().strftime('%Y%m%d_%H%M%S%f')[:-3])
-##        featuresC1 = get_indicators(coil1)
-##        featuresC2 = get_indicators(coil2)
-##        featuresC3 = get_indicators(coil3)
-##        featuresC4 = get_indicators(coil4)
-##        features = []
-##        features.extend(featuresC1)
-##        features.extend(featuresC2)
-##        features.extend(featuresC3)
-##        features.extend(featuresC4)
-##        print(features)
-##        f = open(dataFolder + "\\"+ dataFile, 'w')
-##        f.write(str(features))
-##        f.close()
-##
-##    for i in range(numsamples):
-##        #Coil3
-##        #coil1 = np.random.uniform(low=0, high=3, size=(100,))
-##        #coil2 = np.random.uniform(low=3, high=5, size=(100,))
-##        #coil3 = np.random.uniform(low=0, high=3, size=(100,))
-##        #coil4 = np.random.uniform(low=3, high=5, size=(100,))
-##        x = '2'
-##        y = '1'
-##        z = '0'
-##        
-##        dataFolder = path + "\\cord_%s_%s_%s" %  (x, y, z)
-##        if not os.path.exists(dataFolder):
-##            os.makedirs(dataFolder)
-##        dataFile = "%s.txt" %  (datetime.utcnow().strftime('%Y%m%d_%H%M%S%f')[:-3])
-##        featuresC1 = get_indicators(coil1)
-##        featuresC2 = get_indicators(coil2)
-##        featuresC3 = get_indicators(coil3)
-##        featuresC4 = get_indicators(coil4)
-##        features = []
-##        features.extend(featuresC1)
-##        features.extend(featuresC2)
-##        features.extend(featuresC3)
-##        features.extend(featuresC4)
-##        print(features)
-##        f = open(dataFolder + "\\"+ dataFile, 'w')
-##        f.write(str(features))
-##        f.close()
-##
-##    for i in range(numsamples):
-##        #Coil4
-##        #coil1 = np.random.uniform(low=0, high=3, size=(100,))
-##        #coil2 = np.random.uniform(low=0, high=3, size=(100,))
-##        #coil3 = np.random.uniform(low=3, high=5, size=(100,))
-##        #coil4 = np.random.uniform(low=3, high=5, size=(100,))
-##        x = '2'
-##        y = '2'
-##        z = '0'
-##        
-##        dataFolder = path + "\\cord_%s_%s_%s" %  (x, y, z)
-##        if not os.path.exists(dataFolder):
-##            os.makedirs(dataFolder)
-##        dataFile = "%s.txt" %  (datetime.utcnow().strftime('%Y%m%d_%H%M%S%f')[:-3])
-##        featuresC1 = get_indicators(coil1)
-##        featuresC2 = get_indicators(coil2)
-##        featuresC3 = get_indicators(coil3)
-##        featuresC4 = get_indicators(coil4)
-##        features = []
-##        features.extend(featuresC1)
-##        features.extend(featuresC2)
-##        features.extend(featuresC3)
-##        features.extend(featuresC4)
-##        print(features)
-##        f = open(dataFolder + "\\"+ dataFile, 'w')
-##        f.write(str(features))
-##        f.close()
+
     print('done')        
 
 def get_indicators(vec):
@@ -516,9 +402,9 @@ if __name__ == '__main__':
             connectArduino()
         except:
             print('No Arduino')
-        collectData()
+        #collectData()
         #standarizeData()
-        #trainClassifier()
+        trainClassifier()
         #app = QApplication(sys.argv)
         #ex = TrackingGui()
         #sys.exit(app.exec_())
