@@ -14,6 +14,8 @@ import PyQt5.QtWidgets
 from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtWidgets import *
 
+from sklearn.externals import joblib
+
 import matplotlib
 matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
@@ -34,14 +36,17 @@ def standarizeData():
         for path, subdir, files in os.walk('.'):
             for directory in subdir:            
                 for file in os.listdir(os.getcwd() + '\\'+directory):
-                    y.append(directory)
-                    filename = os.getcwd()+ '\\'+directory + '\\' + file
-                    f = open(filename, 'r')
-                    data = f.read()#[1:-1]
-                    data = data[1:-1]
-                    data = [float(s) for s in data.split(',')]
-                    X.append(data)
-                    f.close()
+                    if directory[5]=="2" or directory[5]=="3" or directory[5]=="1":
+                        pass
+                    else:
+                        y.append(directory)
+                        filename = os.getcwd()+ '\\'+directory + '\\' + file
+                        f = open(filename, 'r')
+                        data = f.read()#[1:-1]
+                        data = data[1:-1]
+                        data = [float(s) for s in data.split(',')]
+                        X.append(data)
+                        f.close()
     except Exception as exc:
         print(exc)
     #print(y)
@@ -70,7 +75,7 @@ def trainClassifier():
     X = np.array(features.X)
     y = np.array(features.y)
 
-    testSize = .3
+    testSize = .05
     randomState=1
     
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=testSize, random_state=randomState)
@@ -96,6 +101,8 @@ def trainClassifier():
     clf3.fit(X_train,y_train)
     eclf.fit(X_train,y_train)
 
+    joblib.dump(clf0, 'svm-SVC.pkl')
+    
     #svrRbf.fit(X_train,y_train)
     #svrLin.fit(X_train,y_train)
     #svrPoly.fit(X_train,y_train)
@@ -116,19 +123,19 @@ def trainClassifier():
     
     for i in range(len(predictions)):
 
-        pprint.pprint(estimatorName[i])
-        pprint.pprint('Predictions:'), pprint.pprint(np.array(predictions[i]))
-        pprint.pprint('Ground Truth:'), pprint.pprint(np.array(y_test))
+        #pprint.pprint(estimatorName[i])
+        #pprint.pprint('Predictions:'), pprint.pprint(np.array(predictions[i]))
+        #pprint.pprint('Ground Truth:'), pprint.pprint(np.array(y_test))
         
         predVsTruth=predictions[i]==y_test        
-        pprint.pprint(predVsTruth)
+        #pprint.pprint(predVsTruth)
         numCases =(len(predictions[i]))
         numTrue = np.sum(predVsTruth)
         numFalse = numCases - numTrue
         print('Accuracy is: "%s"' % (numTrue/numCases*100))
         print('Number True: "%s", Number False: "%s"\n\n' % (numTrue,numFalse))
 
-    #Must download Graphviz.exe and pip install graphviz for this to work
+    """#Must download Graphviz.exe and pip install graphviz for this to work
     #Gives a tree representation of the decision tree decision parameters. 
     os.environ["PATH"] += os.pathsep + 'C:\\Program Files (x86)\\Graphviz2.38\\bin\\'
     dot_data = tree.export_graphviz(clf1, out_file=None) 
@@ -161,7 +168,7 @@ def trainClassifier():
     plt.tight_layout()
     #plt.savefig('./random_forest.png', dpi=300)
     plt.show()
-    
+    """
 
 
 def collectData():
@@ -170,23 +177,23 @@ def collectData():
         #path = 'C:\\Users\\Gersemi\\Desktop\\Github\\3Dtracking\\data\\'
         #ser = Serial.serial
         
-        numsamples = 100
+        numsamples = 1000
         coil1arr=[]
         coil2arr=[]
         coil3arr=[]
         coil4arr=[]
-        o = '270'
+        o = '0'
         x = '6'
-        y = '6'
+        y = '1'
         z = '5'
         
         dataFolder = path + "\\cord_%s_%s_%s_%s" %  (o, x, y, z)
         if not os.path.exists(dataFolder):
             os.makedirs(dataFolder)
         
-        for i in range(numsamples):
+        for i in range(10):
             dataFile = "%s.txt" %  (datetime.utcnow().strftime('%Y%m%d_%H%M%S%f')[:-3])
-            for i in range(10):
+            for i in range(numsamples):
                 reading = ard.readline().decode("utf-8")
                 if 'coil1' in reading:
                     coil1 = reading
@@ -230,7 +237,8 @@ def collectData():
             print(exc)
             ard.close()
 
-    print('done')        
+    print('done with "%s", "%s"' % (x,y))
+    print(np.average(coil1arr),np.average(coil2arr),np.average(coil3arr),np.average(coil4arr))
 
 def get_indicators(vec):
     '''
@@ -301,6 +309,8 @@ class TrackingGui(QWidget):
 
     def __init__(self):
         super().__init__()
+        global clf1
+        clf1 = joblib.load('svm-SVC.pkl')        
 
         #Coordinate box setup
         xlabel = QLabel('X:', self) 
@@ -358,19 +368,19 @@ class TrackingGui(QWidget):
 
         timer = QTimer(self)
         timer.timeout.connect(self.updatePlot)
-        timer.start(20)
+        timer.start(100)
         
     def updatePlot(self):
         try:
             ''' plot some random stuff '''
-            #x, y, z = classifyData()
-            x = random.uniform(0.0,30.0)
-            y = random.uniform(0.0,20.0)
-            z = random.uniform(0.0,10.0)
+            x, y, z = classifyData()
+            #x = random.uniform(0.0,30.0)
+            #y = random.uniform(0.0,20.0)
+            #z = random.uniform(0.0,10.0)
             
-            self.xline.setText(str(round(x,2))+' mm')
-            self.yline.setText(str(round(y,2))+' mm')
-            self.zline.setText(str(round(z,2))+' mm')
+            self.xline.setText(str(round(x,2)))
+            self.yline.setText(str(round(y,2)))
+            self.zline.setText(str(round(z,2)))
             
             # create an axis
             #ax = self.figure.add_subplot(111, projection='3d')
@@ -379,8 +389,8 @@ class TrackingGui(QWidget):
             self.ax.clear()
 
             # plot data
-            self.ax.set_xlim(0, 30, 5)
-            self.ax.set_ylim(0, 20, 5)
+            self.ax.set_xlim(1, 6, 5)
+            self.ax.set_ylim(1, 4, 5)
             self.ax.set_zlim(0, 10, 2)
             self.ax.scatter(x, y, z, 'gray')
 
@@ -394,7 +404,72 @@ class TrackingGui(QWidget):
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
-            
+
+def classifyData():
+    try:
+        coil1arr=[]
+        coil2arr=[]
+        coil3arr=[]
+        coil4arr=[]
+        numsamples = 100
+        global clf1
+        if clf1==None:
+            clf1 = joblib.load('svm-SVC.pkl') 
+        for i in range(100):
+            reading = ard.readline().decode("utf-8")
+            if 'coil1' in reading:
+                coil1 = reading
+                coil1arr.append(float(coil1[5:]))
+                #print(coil1)
+            elif 'coil2' in reading:
+                coil2 = reading
+                coil2arr.append(float(coil2[5:]))
+                #print(coil2)
+            elif 'coil3' in reading:
+                coil3 = reading
+                coil3arr.append(float(coil3[5:]))
+                #print(coil3)
+            elif 'coil4' in reading:
+                coil4 = reading
+                coil4arr.append(float(coil4[5:]))
+                #print(coil4)
+            #print('1: "%s", 2: "%s", 3: "%s", 4: "%s"' % (coil1, coil2, coil3, coil4))
+
+        #print(coil1arr,coil2arr,coil3arr,coil4arr) 
+        featuresC1 = get_indicators(coil1arr)
+        print("coil1")
+        print(featuresC1)
+        featuresC2 = get_indicators(coil2arr)
+        print("coil2")
+        print(featuresC2)
+        featuresC3 = get_indicators(coil3arr)
+        print("coil3")
+        print(featuresC3)
+        featuresC4 = get_indicators(coil4arr)
+        print("coil4")
+        print(featuresC4)
+        features = []
+        features.extend(featuresC1)
+        features.extend(featuresC2)
+        features.extend(featuresC3)
+        features.extend(featuresC4)
+
+             
+        prediction = clf1.predict([features])
+        
+        coordinates = prediction[0].split("_")
+        orien = coordinates[1]
+        x = int(coordinates[2])
+        y = int(coordinates[3])
+        z = int(coordinates[4])
+        print(("o:%s, x:%s, y:%s, z:%s") % (orien,x,y,z))
+        return [x,y,z]
+        
+        
+    except Exception as exc:
+        print('Exception: "%s"' % exc)
+
+clf1 = None  
 if __name__ == '__main__':
     
     try:
@@ -404,9 +479,10 @@ if __name__ == '__main__':
             print('No Arduino')
         #collectData()
         #standarizeData()
-        trainClassifier()
-        #app = QApplication(sys.argv)
-        #ex = TrackingGui()
-        #sys.exit(app.exec_())
+        #trainClassifier()
+        #classifyData()
+        app = QApplication(sys.argv)
+        ex = TrackingGui()
+        sys.exit(app.exec_())
     except KeyboardInterrupt:
         pass
