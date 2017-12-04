@@ -335,7 +335,8 @@ class TrackingGui(QWidget):
         # it takes the `figure` instance as a parameter to __init__
         self.canvas = FigureCanvas(self.figure)
         #self.fig = plt.figure()
-        self.ax = self.figure.add_subplot(111, projection='3d')
+        self.ax = self.figure.add_subplot(211)
+        self.ax1 = self.figure.add_subplot(212)
         
         #Placing objects onto the GUI
         grid = QGridLayout()
@@ -373,7 +374,7 @@ class TrackingGui(QWidget):
     def updatePlot(self):
         try:
             ''' plot some random stuff '''
-            x, y, z = classifyData()
+            x, y, z, coil1data, coil2data, coil3data, coil4data = classifyData()
             #x = random.uniform(0.0,30.0)
             #y = random.uniform(0.0,20.0)
             #z = random.uniform(0.0,10.0)
@@ -387,12 +388,16 @@ class TrackingGui(QWidget):
 
             # discards the old graph
             self.ax.clear()
+            self.ax1.clear()
 
             # plot data
-            self.ax.set_xlim(1, 6, 5)
-            self.ax.set_ylim(1, 4, 5)
-            self.ax.set_zlim(0, 10, 2)
-            self.ax.scatter(x, y, z, 'gray')
+            self.ax.set_xlim(1, 4)
+            self.ax.set_ylim(1, 6)
+            self.ax.scatter(x, y, s=500, 'brown')
+            self.ax1.plot(coil1data, 'r')
+            self.ax1.plot(coil2data, 'g')
+            self.ax1.plot(coil3data, 'b')
+            self.ax1.plot(coil4data, 'y')
 
             # refresh canvas
             self.canvas.draw()
@@ -463,7 +468,7 @@ def classifyData():
         y = int(coordinates[3])
         z = int(coordinates[4])
         print(("o:%s, x:%s, y:%s, z:%s") % (orien,x,y,z))
-        return [x,y,z]
+        return [x,y,z], coil1arr, coil2arr, coil3arr, coil4arr
         
         
     except Exception as exc:
