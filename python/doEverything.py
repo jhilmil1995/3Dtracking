@@ -306,6 +306,8 @@ def printCoilData():
         print('Exception: "%s"' % exc)
 
 class TrackingGui(QWidget):
+    
+    voltageConversion = (5.0/1023.0)
 
     def __init__(self):
         super().__init__()
@@ -382,9 +384,6 @@ class TrackingGui(QWidget):
             self.xline.setText(str(round(x,2)))
             self.yline.setText(str(round(y,2)))
             self.zline.setText(str(round(z,2)))
-            
-            # create an axis
-            #ax = self.figure.add_subplot(111, projection='3d')
 
             # discards the old graph
             self.ax.clear()
@@ -394,10 +393,15 @@ class TrackingGui(QWidget):
             self.ax.set_xlim(1, 4)
             self.ax.set_ylim(1, 6)
             self.ax.scatter(x, y, s=500, 'brown')
-            self.ax1.plot(coil1data, 'r')
-            self.ax1.plot(coil2data, 'g')
-            self.ax1.plot(coil3data, 'b')
-            self.ax1.plot(coil4data, 'y')
+##            self.ax1.plot(coil1data, 'r')
+##            self.ax1.plot(coil2data, 'g')
+##            self.ax1.plot(coil3data, 'b')
+##            self.ax1.plot(coil4data, 'y')
+            self.ax1.plot([x*self.voltageConversion for x in coil1data], 'r')
+            self.ax1.plot([x*self.voltageConversion for x in coil2data], 'g')
+            self.ax1.plot([x*self.voltageConversion for x in coil3data], 'b')
+            self.ax1.plot([x*self.voltageConversion for x in coil4data], 'y')
+
 
             # refresh canvas
             self.canvas.draw()
